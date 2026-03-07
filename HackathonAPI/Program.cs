@@ -10,9 +10,6 @@ builder.Services
     {
         opt.JsonSerializerOptions.DefaultIgnoreCondition =
             JsonIgnoreCondition.WhenWritingNull;
-
-        opt.JsonSerializerOptions.DefaultIgnoreCondition =
-            JsonIgnoreCondition.WhenWritingDefault;
     });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -28,7 +25,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     DbInitializer.Initialize(scope.ServiceProvider,
-        DeleteDatabase: false,
+        DeleteDatabase: true,
         UseMigrations: true,
         SeedSampleData: true);
 }

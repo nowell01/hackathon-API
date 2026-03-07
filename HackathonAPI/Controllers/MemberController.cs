@@ -132,8 +132,22 @@ public class MemberController : ControllerBase
 
         var created = await _context.Members
             .AsNoTracking()
-            .Include(m => m.Region)
-            .Include(m => m.Challenge)
+            .Select(m => new MemberDTO
+            {
+                ID = m.ID,
+                FirstName = m.FirstName,
+                MiddleName = m.MiddleName,
+                LastName = m.LastName,
+                MemberCode = m.MemberCode,
+                DOB = m.DOB,
+                SkillRating = m.SkillRating,
+                YearsExperience = m.YearsExperience,
+                Category = m.Category,
+                Organization = m.Organization,
+                RegionID = m.RegionID,
+                ChallengeID = m.ChallengeID,
+                RowVersion = m.RowVersion
+            })
             .FirstAsync(m => m.ID == member.ID);
 
         return CreatedAtAction(nameof(GetMember), new { id = created.ID }, created);

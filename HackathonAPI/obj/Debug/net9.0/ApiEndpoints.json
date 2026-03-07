@@ -9,7 +9,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[HackathonApi.DTO.ChallengeReadDto, HackathonAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[HackathonApi.DTO.ChallengeDTO, HackathonAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -35,7 +35,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "HackathonApi.DTO.ChallengeReadDto",
+        "Type": "HackathonApi.DTO.ChallengeDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -55,7 +55,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[HackathonApi.DTO.ChallengeWithMembersDto, HackathonAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[HackathonApi.DTO.ChallengeDTO, HackathonAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -81,7 +81,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "HackathonApi.DTO.ChallengeWithMembersDto",
+        "Type": "HackathonApi.DTO.ChallengeDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -262,7 +262,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[HackathonApi.DTO.RegionReadDto, HackathonAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[HackathonApi.DTO.RegionDTO, HackathonAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -288,7 +288,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "HackathonApi.DTO.RegionReadDto",
+        "Type": "HackathonApi.DTO.RegionDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -308,7 +308,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[HackathonApi.DTO.RegionWithMembersDto, HackathonAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[HackathonApi.DTO.RegionDTO, HackathonAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -334,7 +334,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "HackathonApi.DTO.RegionWithMembersDto",
+        "Type": "HackathonApi.DTO.RegionDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",

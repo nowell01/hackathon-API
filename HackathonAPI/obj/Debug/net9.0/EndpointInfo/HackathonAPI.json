@@ -18,7 +18,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ChallengeReadDto"
+                    "$ref": "#/components/schemas/ChallengeDTO"
                   }
                 }
               },
@@ -26,7 +26,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ChallengeReadDto"
+                    "$ref": "#/components/schemas/ChallengeDTO"
                   }
                 }
               },
@@ -34,7 +34,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ChallengeReadDto"
+                    "$ref": "#/components/schemas/ChallengeDTO"
                   }
                 }
               }
@@ -65,17 +65,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChallengeReadDto"
+                  "$ref": "#/components/schemas/ChallengeDTO"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChallengeReadDto"
+                  "$ref": "#/components/schemas/ChallengeDTO"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChallengeReadDto"
+                  "$ref": "#/components/schemas/ChallengeDTO"
                 }
               }
             }
@@ -96,7 +96,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ChallengeWithMembersDto"
+                    "$ref": "#/components/schemas/ChallengeDTO"
                   }
                 }
               },
@@ -104,7 +104,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ChallengeWithMembersDto"
+                    "$ref": "#/components/schemas/ChallengeDTO"
                   }
                 }
               },
@@ -112,7 +112,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ChallengeWithMembersDto"
+                    "$ref": "#/components/schemas/ChallengeDTO"
                   }
                 }
               }
@@ -143,17 +143,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChallengeWithMembersDto"
+                  "$ref": "#/components/schemas/ChallengeDTO"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChallengeWithMembersDto"
+                  "$ref": "#/components/schemas/ChallengeDTO"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChallengeWithMembersDto"
+                  "$ref": "#/components/schemas/ChallengeDTO"
                 }
               }
             }
@@ -457,7 +457,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RegionReadDto"
+                    "$ref": "#/components/schemas/RegionDTO"
                   }
                 }
               },
@@ -465,7 +465,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RegionReadDto"
+                    "$ref": "#/components/schemas/RegionDTO"
                   }
                 }
               },
@@ -473,7 +473,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RegionReadDto"
+                    "$ref": "#/components/schemas/RegionDTO"
                   }
                 }
               }
@@ -504,17 +504,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegionReadDto"
+                  "$ref": "#/components/schemas/RegionDTO"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegionReadDto"
+                  "$ref": "#/components/schemas/RegionDTO"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegionReadDto"
+                  "$ref": "#/components/schemas/RegionDTO"
                 }
               }
             }
@@ -535,7 +535,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RegionWithMembersDto"
+                    "$ref": "#/components/schemas/RegionDTO"
                   }
                 }
               },
@@ -543,7 +543,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RegionWithMembersDto"
+                    "$ref": "#/components/schemas/RegionDTO"
                   }
                 }
               },
@@ -551,7 +551,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RegionWithMembersDto"
+                    "$ref": "#/components/schemas/RegionDTO"
                   }
                 }
               }
@@ -582,17 +582,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegionWithMembersDto"
+                  "$ref": "#/components/schemas/RegionDTO"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegionWithMembersDto"
+                  "$ref": "#/components/schemas/RegionDTO"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegionWithMembersDto"
+                  "$ref": "#/components/schemas/RegionDTO"
                 }
               }
             }
@@ -603,25 +603,7 @@
   },
   "components": {
     "schemas": {
-      "ChallengeReadDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "code": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ChallengeWithMembersDto": {
+      "ChallengeDTO": {
         "type": "object",
         "properties": {
           "id": {
@@ -727,25 +709,7 @@
         },
         "additionalProperties": false
       },
-      "RegionReadDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "code": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "RegionWithMembersDto": {
+      "RegionDTO": {
         "type": "object",
         "properties": {
           "id": {

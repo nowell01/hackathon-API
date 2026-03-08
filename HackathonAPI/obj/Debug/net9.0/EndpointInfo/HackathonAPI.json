@@ -693,6 +693,12 @@
             "minLength": 0,
             "type": "string"
           },
+          "challenge": {
+            "$ref": "#/components/schemas/ChallengeDTO"
+          },
+          "region": {
+            "$ref": "#/components/schemas/RegionDTO"
+          },
           "regionID": {
             "type": "integer",
             "format": "int32"

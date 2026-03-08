@@ -11,6 +11,6 @@ namespace HackathonApi.DTO
         public string? Code { get; set; }
         public string? Name { get; set; }
 
-        public List<MemberDTO> Members { get; set; } = new();
+        public List<MemberDTO>? Members { get; set; }
     }
 }

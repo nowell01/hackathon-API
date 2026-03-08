@@ -18,92 +18,119 @@ public class RegionController : ControllerBase
 
     // GET: api/Region
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<RegionDTO>>> GetAll()
+    public async Task<ActionResult<IEnumerable<RegionDTO>>> GetRegions()
     {
-        var regions = await _context.Regions
-            .AsNoTracking()
-            .OrderBy(r => r.Name)
-            .ToListAsync();
+        var regionDTOs = await _context.Regions
+                 .Select(r => new RegionDTO
+                 {
+                     ID = r.ID,
+                     Code = r.Code,
+                     Name = r.Name
+                 })
+                 .ToListAsync();
 
-        return Ok(regions.Select(r => new RegionDTO { ID = r.ID, Code = r.Code, Name = r.Name }));
+        if (regionDTOs.Count() > 0)
+        {
+            return regionDTOs;
+        }
+        else
+        {
+            return NotFound(new { message = "Error: No Region records found in the database." });
+        }
     }
 
     // GET: api/Region/{id}
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<RegionDTO>> GetById(int id)
+    public async Task<ActionResult<RegionDTO>> GetRegion(int id)
     {
-        var r = await _context.Regions.AsNoTracking().FirstOrDefaultAsync(x => x.ID == id);
-        if (r == null) return NotFound();
+        var regionDTOs = await _context.Regions
+                 .Select(r => new RegionDTO
+                 {
+                     ID = r.ID,
+                     Code = r.Code,
+                     Name = r.Name
+                 })
+                 .FirstOrDefaultAsync(r => r.ID == id);
 
-        return Ok(new RegionDTO { ID = r.ID, Code = r.Code, Name = r.Name });
+        if (regionDTOs == null)
+        {
+            return NotFound(new { message = "Error: No Region records found in the database." });
+        }
+
+        return regionDTOs;
     }
 
     // GET: api/Region/inc
     [HttpGet("inc")]
-    public async Task<ActionResult<IEnumerable<RegionDTO>>> GetAllWithMembers()
+    public async Task<ActionResult<IEnumerable<RegionDTO>>> GetRegionsInc()
     {
-        var regions = await _context.Regions
-            .AsNoTracking()
-            .Include(r => r.Members)
-                .ThenInclude(m => m.Challenge)
-            .OrderBy(r => r.Name)
-            .ToListAsync();
+        var regionDTOs = await _context.Regions
+                 .Select(r => new RegionDTO
+                 {
+                     ID = r.ID,
+                     Code = r.Code,
+                     Name = r.Name,
+                     Members = r.Members.Select(m => new MemberDTO
+                     {
+                         ID = m.ID,
+                         FirstName = m.FirstName,
+                         MiddleName = m.MiddleName,
+                         LastName = m.LastName,
+                         MemberCode = m.MemberCode,
+                         DOB = m.DOB,
+                         SkillRating = m.SkillRating,
+                         YearsExperience = m.YearsExperience,
+                         Category = m.Category,
+                         Organization = m.Organization,
+                         RegionID = m.RegionID,
+                         ChallengeID = m.ChallengeID
+                     }).ToList()
+                 })
+                 .ToListAsync();
 
-        var result = regions.Select(r => new RegionDTO
+        if (regionDTOs.Count() > 0)
         {
-            ID = r.ID,
-            Code = r.Code,
-            Name = r.Name,
-            Members = r.Members.Select(m => new MemberDTO
-            {
-                ID = m.ID,
-                MemberCode = m.MemberCode,
-                DOB = m.DOB,
-                SkillRating = m.SkillRating,
-                YearsExperience = m.YearsExperience,
-                Category = m.Category,
-                Organization = m.Organization,
-                RegionID = m.RegionID,
-                ChallengeID = m.ChallengeID,
-                RowVersion = m.RowVersion
-            }).ToList()
-        });
-
-        return Ok(result);
+            return regionDTOs;
+        }
+        else
+        {
+            return NotFound(new { message = "Error: No Region records found in the database." });
+        }
     }
 
     // GET: api/Region/inc/{id}
     [HttpGet("inc/{id:int}")]
-    public async Task<ActionResult<RegionDTO>> GetByIdWithMembers(int id)
+    public async Task<ActionResult<RegionDTO>> GetRegionInc(int id)
     {
-        var r = await _context.Regions
-            .AsNoTracking()
-            .Include(x => x.Members)
-                .ThenInclude(m => m.Challenge)
-            .FirstOrDefaultAsync(x => x.ID == id);
+        var regionDTOs = await _context.Regions
+                 .Select(r => new RegionDTO
+                 {
+                     ID = r.ID,
+                     Code = r.Code,
+                     Name = r.Name,
+                     Members = r.Members.Select(m => new MemberDTO
+                        {
+                            ID = m.ID,
+                            FirstName = m.FirstName,
+                            MiddleName = m.MiddleName,
+                            LastName = m.LastName,
+                            MemberCode = m.MemberCode,
+                            DOB = m.DOB,
+                            SkillRating = m.SkillRating,
+                            YearsExperience = m.YearsExperience,
+                            Category = m.Category,
+                            Organization = m.Organization,
+                            RegionID = m.RegionID,
+                            ChallengeID = m.ChallengeID
+                        }).ToList()
+                 })
+                 .FirstOrDefaultAsync(r => r.ID == id);
 
-        if (r == null) return NotFound();
-
-        var dto = new RegionDTO
+        if (regionDTOs == null)
         {
-            ID = r.ID,
-            Code = r.Code,
-            Name = r.Name,
-            Members = r.Members.Select(m => new MemberDTO
-            {
-                ID = m.ID,
-                MemberCode = m.MemberCode,
-                DOB = m.DOB,
-                SkillRating = m.SkillRating,
-                YearsExperience = m.YearsExperience,
-                Category = m.Category,
-                Organization = m.Organization,
-                RegionID = m.RegionID,
-                ChallengeID = m.ChallengeID,
-                RowVersion = m.RowVersion
-            }).ToList()
-        };
+            return NotFound(new { message = "Error: No Region records found in the database." });
+        }
 
-        return Ok(dto);
+        return regionDTOs;
     }
 }

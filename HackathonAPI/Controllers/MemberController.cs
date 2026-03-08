@@ -74,150 +74,226 @@ public class MemberController : ControllerBase
     [HttpGet("ByRegion/{id:int}")]
     public async Task<ActionResult<IEnumerable<MemberDTO>>> GetMemberByRegion(int id)
     {
-        var members = await _context.Members
-            .AsNoTracking()
-            .Include(m => m.Region)
-            .Include(m => m.Challenge)
-            .Where(m => m.RegionID == id)
-            .ToListAsync();
+        var memberDTOs = await _context.Members
+                .Include(e => e.Region)
+                .Where(e => e.RegionID == id)
+                .Select(m => new MemberDTO
+                {
+                    ID = m.ID,
+                    FirstName = m.FirstName,
+                    MiddleName = m.MiddleName,
+                    LastName = m.LastName,
+                    MemberCode = m.MemberCode,
+                    DOB = m.DOB,
+                    SkillRating = m.SkillRating,
+                    YearsExperience = m.YearsExperience,
+                    Category = m.Category,
+                    Organization = m.Organization,
+                    RowVersion = m.RowVersion,
+                    RegionID = m.RegionID,
+                    Region = m.Region != null ? new RegionDTO
+                    {
+                        ID = m.Region.ID,
+                        Code = m.Region.Code,
+                        Name = m.Region.Name,
 
-        return Ok(members);
+                    } : null
+                })
+                .ToListAsync();
+
+        if (memberDTOs.Count() > 0)
+        {
+            return memberDTOs;
+        }
+        else
+        {
+            return NotFound(new { message = "Error: No Members for the specified Region." });
+        }
     }
 
     // GET: api/Member/ByChallenge/{id}
     [HttpGet("ByChallenge/{id:int}")]
     public async Task<ActionResult<IEnumerable<MemberDTO>>> GetMemberByChallenge(int id)
     {
-        var members = await _context.Members
-            .AsNoTracking()
-            .Include(m => m.Region)
-            .Include(m => m.Challenge)
-            .Where(m => m.ChallengeID == id)
-            .ToListAsync();
+        var memberDTOs = await _context.Members
+                .Include(e => e.Challenge)
+                .Where(e => e.ChallengeID == id)
+                .Select(m => new MemberDTO
+                {
+                    ID = m.ID,
+                    FirstName = m.FirstName,
+                    MiddleName = m.MiddleName,
+                    LastName = m.LastName,
+                    MemberCode = m.MemberCode,
+                    DOB = m.DOB,
+                    SkillRating = m.SkillRating,
+                    YearsExperience = m.YearsExperience,
+                    Category = m.Category,
+                    Organization = m.Organization,
+                    RowVersion = m.RowVersion,
+                    ChallengeID = m.ChallengeID,
+                    Challenge = m.Challenge != null ? new ChallengeDTO
+                    {
+                        ID = m.Challenge.ID,
+                        Code = m.Challenge.Code,
+                        Name = m.Challenge.Name,
 
-        return Ok(members);
+                    } : null
+                })
+                .ToListAsync();
+
+        if (memberDTOs.Count() > 0)
+        {
+            return memberDTOs;
+        }
+        else
+        {
+            return NotFound(new { message = "Error: No Members for the specified Region." });
+        }
     }
 
     // POST: api/Member
     [HttpPost]
-    public async Task<ActionResult<MemberDTO>> PostMember(MemberDTO dto)
+    public async Task<ActionResult<MemberDTO>> PostMember(MemberDTO memberdto)
     {
-        if (!ModelState.IsValid) return ValidationProblem(ModelState);
-
-        var member = new Member
+        if (!ModelState.IsValid)
         {
-            FirstName = dto.FirstName,
-            MiddleName = dto.MiddleName,
-            LastName = dto.LastName,
-            MemberCode = dto.MemberCode,
-            DOB = dto.DOB,
-            SkillRating = dto.SkillRating,
-            YearsExperience = dto.YearsExperience,
-            Category = dto.Category,
-            Organization = dto.Organization,
-            RegionID = dto.RegionID,
-            ChallengeID = dto.ChallengeID
-        };
+            return BadRequest(ModelState);
+        }
 
-        _context.Members.Add(member);
+        Member member = new Member
+        {
+            FirstName = memberdto.FirstName,
+            MiddleName = memberdto.MiddleName,
+            LastName = memberdto.LastName,
+            MemberCode = memberdto.MemberCode,
+            DOB = memberdto.DOB,
+            SkillRating = memberdto.SkillRating,
+            YearsExperience = memberdto.YearsExperience,
+            Category = memberdto.Category,
+            Organization = memberdto.Organization,
+            RegionID = memberdto.RegionID,
+            ChallengeID = memberdto.ChallengeID
+        };
 
         try
         {
+            _context.Members.Add(member);
             await _context.SaveChangesAsync();
+
+            memberdto.ID = member.ID;
+            memberdto.RowVersion = member.RowVersion;
+
+            return CreatedAtAction(nameof(GetMember), new { id = member.ID }, memberdto);
         }
         catch (DbUpdateException ex)
         {
-            return BadRequest(BuildDbErrorMessage(ex));
-        }
-
-        var created = await _context.Members
-            .AsNoTracking()
-            .Select(m => new MemberDTO
+            if (ex.GetBaseException().Message.Contains("UNIQUE"))
             {
-                ID = m.ID,
-                FirstName = m.FirstName,
-                MiddleName = m.MiddleName,
-                LastName = m.LastName,
-                MemberCode = m.MemberCode,
-                DOB = m.DOB,
-                SkillRating = m.SkillRating,
-                YearsExperience = m.YearsExperience,
-                Category = m.Category,
-                Organization = m.Organization,
-                RegionID = m.RegionID,
-                ChallengeID = m.ChallengeID,
-                RowVersion = m.RowVersion
-            })
-            .FirstAsync(m => m.ID == member.ID);
-
-        return CreatedAtAction(nameof(GetMember), new { id = created.ID }, created);
+                return BadRequest(new { message = "Unable to save: Duplicate MemberCode number." });
+            }
+            else
+            {
+                return BadRequest(new { message = "Unable to save changes to the database. Try again, and if the problem persists see your system administrator." });
+            }
+        }
     }
 
     // PUT: api/Member/{id}
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> PutMember(int id, MemberDTO dto)
+    public async Task<IActionResult> PutMember(int id, MemberDTO memberdto)
     {
-        if (!ModelState.IsValid) return ValidationProblem(ModelState);
+        if (id != memberdto.ID)
+        {
+            return BadRequest(new { message = "Error: ID does not match Member" });
+        }
 
-        var member = await _context.Members.FirstOrDefaultAsync(m => m.ID == id);
-        if (member == null) return NotFound();
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
 
-        if (dto.RowVersion == null)
-            return BadRequest("RowVersion is required for concurrency control.");
+        var memberToUpdate = await _context.Members.FindAsync(id);
 
-        member.FirstName = dto.FirstName;
-        member.MiddleName = dto.MiddleName;
-        member.LastName = dto.LastName;
-        member.MemberCode = dto.MemberCode;
-        member.DOB = dto.DOB;
-        member.SkillRating = dto.SkillRating;
-        member.YearsExperience = dto.YearsExperience;
-        member.Category = dto.Category;
-        member.Organization = dto.Organization;
-        member.RegionID = dto.RegionID;
-        member.ChallengeID = dto.ChallengeID;
+        if (memberToUpdate == null)
+        {
+            return NotFound(new { message = "Error: Member record not found." });
+        }
 
-        _context.Entry(member).Property(m => m.RowVersion).OriginalValue = dto.RowVersion;
+        if (memberdto.RowVersion != null)
+        {
+            if (!memberToUpdate.RowVersion.SequenceEqual(memberdto.RowVersion))
+            {
+                return Conflict(new { message = "Concurrency Error: Member has been changed by another user.  Try editing the record again." });
+            }
+        }
+
+        memberToUpdate.ID = memberdto.ID;
+        memberToUpdate.FirstName = memberdto.FirstName;
+        memberToUpdate.MiddleName = memberdto.MiddleName;
+        memberToUpdate.LastName = memberdto.LastName;
+        memberToUpdate.MemberCode = memberdto.MemberCode;
+        memberToUpdate.DOB = memberdto.DOB;
+        memberToUpdate.SkillRating = memberdto.SkillRating;
+        memberToUpdate.RowVersion = memberdto.RowVersion;
+        memberToUpdate.YearsExperience = memberdto.YearsExperience;
+        memberToUpdate.Category = memberdto.Category;
+        memberToUpdate.Organization = memberdto.Organization;
+        memberToUpdate.RegionID = memberdto.RegionID;
+        memberToUpdate.ChallengeID = memberdto.ChallengeID;
+
+        //Put the original RowVersion value in the OriginalValues collection for the entity
+        _context.Entry(memberToUpdate).Property("RowVersion").OriginalValue = memberdto.RowVersion;
 
         try
         {
             await _context.SaveChangesAsync();
+            return NoContent();
         }
         catch (DbUpdateConcurrencyException)
         {
-            return Conflict("Concurrency conflict: the record was modified by another user.");
+            if (!MemberExists(id))
+            {
+                return Conflict(new { message = "Concurrency Error: Member has been Removed." });
+            }
+            else
+            {
+                return Conflict(new { message = "Concurrency Error: Member has been updated by another user.  Back out and try editing the record again." });
+            }
         }
-        catch (DbUpdateException ex)
+        catch (DbUpdateException dex)
         {
-            return BadRequest(BuildDbErrorMessage(ex));
+            if (dex.GetBaseException().Message.Contains("UNIQUE"))
+            {
+                return BadRequest(new { message = "Unable to save: Duplicate MemberCode number." });
+            }
+            else
+            {
+                return BadRequest(new { message = "Unable to save changes to the database. Try again, and if the problem persists see your system administrator." });
+            }
         }
-
-        return NoContent();
     }
 
     // DELETE: api/Member/{id}
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> DeleteMember(int id)
     {
-        var member = await _context.Members.FirstOrDefaultAsync(m => m.ID == id);
-        if (member == null) return NotFound();
-
-        _context.Members.Remove(member);
+        var member = await _context.Members.FindAsync(id);
+        if (member == null) return NotFound(new { message = "Delete Error: Member has already been removed." });
 
         try
         {
+            _context.Members.Remove(member);
             await _context.SaveChangesAsync();
+            return NoContent();
         }
         catch (DbUpdateException ex)
         {
-            return BadRequest(BuildDbErrorMessage(ex));
+            return BadRequest(new { message = "Delete Error: Unable to delete Member." });
         }
-
-        return NoContent();
     }
-
-    private static string BuildDbErrorMessage(DbUpdateException ex)
+    private bool MemberExists(int id)
     {
-        return "Database error: " + (ex.InnerException?.Message ?? ex.Message);
+        return _context.Members.Any(e => e.ID == id);
     }
 }

@@ -18,92 +18,119 @@ public class ChallengeController : ControllerBase
 
     // GET: api/Challenge
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ChallengeDTO>>> GetAll()
+    public async Task<ActionResult<IEnumerable<ChallengeDTO>>> GetChallenges()
     {
-        var challenges = await _context.Challenges
-            .AsNoTracking()
-            .OrderBy(c => c.Name)
-            .ToListAsync();
+        var challengeDTOs = await _context.Challenges
+                 .Select(c => new ChallengeDTO
+                 {
+                     ID = c.ID,
+                     Code = c.Code,
+                     Name = c.Name
+                 })
+                 .ToListAsync();
 
-        return Ok(challenges.Select(c => new ChallengeDTO { ID = c.ID, Code = c.Code, Name = c.Name }));
+        if (challengeDTOs.Count() > 0)
+        {
+            return challengeDTOs;
+        }
+        else
+        {
+            return NotFound(new { message = "Error: No Challenge records found in the database." });
+        }
     }
 
     // GET: api/Challenge/{id}
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<ChallengeDTO>> GetById(int id)
+    public async Task<ActionResult<ChallengeDTO>> GetChallenge(int id)
     {
-        var c = await _context.Challenges.AsNoTracking().FirstOrDefaultAsync(x => x.ID == id);
-        if (c == null) return NotFound();
+        var challengeDTOs = await _context.Challenges
+                 .Select(c => new ChallengeDTO
+                 {
+                     ID = c.ID,
+                     Code = c.Code,
+                     Name = c.Name
+                 })
+                 .FirstOrDefaultAsync(c => c.ID == id);
 
-        return Ok(new ChallengeDTO { ID = c.ID, Code = c.Code, Name = c.Name });
+        if (challengeDTOs == null)
+        {
+            return NotFound(new { message = "Error: No Challenge records found in the database." });
+        }
+
+        return challengeDTOs;
     }
 
     // GET: api/Challenge/inc
     [HttpGet("inc")]
-    public async Task<ActionResult<IEnumerable<ChallengeDTO>>> GetAllWithMembers()
+    public async Task<ActionResult<IEnumerable<ChallengeDTO>>> GetChallengesInc()
     {
-        var challenges = await _context.Challenges
-            .AsNoTracking()
-            .Include(c => c.Members)
-                .ThenInclude(m => m.Region)
-            .OrderBy(c => c.Name)
-            .ToListAsync();
+        var challengeDTOs = await _context.Challenges
+                 .Select(c => new ChallengeDTO
+                 {
+                     ID = c.ID,
+                     Code = c.Code,
+                     Name = c.Name,
+                     Members = c.Members.Select(m => new MemberDTO
+                     {
+                         ID = m.ID,
+                         FirstName = m.FirstName,
+                         MiddleName = m.MiddleName,
+                         LastName = m.LastName,
+                         MemberCode = m.MemberCode,
+                         DOB = m.DOB,
+                         SkillRating = m.SkillRating,
+                         YearsExperience = m.YearsExperience,
+                         Category = m.Category,
+                         Organization = m.Organization,
+                         RegionID = m.RegionID,
+                         ChallengeID = m.ChallengeID
+                     }).ToList()
+                 })
+                 .ToListAsync();
 
-        var result = challenges.Select(c => new ChallengeDTO
+        if (challengeDTOs.Count() > 0)
         {
-            ID = c.ID,
-            Code = c.Code,
-            Name = c.Name,
-            Members = c.Members.Select(m => new MemberDTO
-            {
-                ID = m.ID,
-                MemberCode = m.MemberCode,
-                DOB = m.DOB,
-                SkillRating = m.SkillRating,
-                YearsExperience = m.YearsExperience,
-                Category = m.Category,
-                Organization = m.Organization,
-                RegionID = m.RegionID,
-                ChallengeID = m.ChallengeID,
-                RowVersion = m.RowVersion
-            }).ToList()
-        });
-
-        return Ok(result);
+            return challengeDTOs;
+        }
+        else
+        {
+            return NotFound(new { message = "Error: No Challenge records found in the database." });
+        }
     }
 
     // GET: api/Challenge/inc/{id}
     [HttpGet("inc/{id:int}")]
-    public async Task<ActionResult<ChallengeDTO>> GetByIdWithMembers(int id)
+    public async Task<ActionResult<ChallengeDTO>> GetChallengeInc(int id)
     {
-        var c = await _context.Challenges
-            .AsNoTracking()
-            .Include(x => x.Members)
-                .ThenInclude(m => m.Region)
-            .FirstOrDefaultAsync(x => x.ID == id);
+        var challengeDTOs = await _context.Challenges
+                 .Select(c => new ChallengeDTO
+                 {
+                     ID = c.ID,
+                     Code = c.Code,
+                     Name = c.Name,
+                     Members = c.Members.Select(m => new MemberDTO
+                     {
+                         ID = m.ID,
+                         FirstName = m.FirstName,
+                         MiddleName = m.MiddleName,
+                         LastName = m.LastName,
+                         MemberCode = m.MemberCode,
+                         DOB = m.DOB,
+                         SkillRating = m.SkillRating,
+                         YearsExperience = m.YearsExperience,
+                         Category = m.Category,
+                         Organization = m.Organization,
+                         RegionID = m.RegionID,
+                         ChallengeID = m.ChallengeID
+                     }).ToList()
+                 })
+                 .FirstOrDefaultAsync(r => r.ID == id);
 
-        if (c == null) return NotFound();
-
-        var dto = new ChallengeDTO
+        if (challengeDTOs == null)
         {
-            ID = c.ID,
-            Code = c.Code,
-            Name = c.Name,
-            Members = c.Members.Select(m => new MemberDTO
-            {
-                ID = m.ID,
-                MemberCode = m.MemberCode,
-                DOB = m.DOB,
-                SkillRating = m.SkillRating,
-                YearsExperience = m.YearsExperience,
-                Category = m.Category,
-                Organization = m.Organization,
-                RegionID = m.RegionID,
-                ChallengeID = m.ChallengeID,
-                RowVersion = m.RowVersion
-            }).ToList()
-        };
+            return NotFound(new { message = "Error: No Challenge records found in the database." });
+        }
 
-        return Ok(dto);
+        return challengeDTOs;
     }
 }
